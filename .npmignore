@@ -14,7 +14,7 @@ bower.json
 
 data/unpacked/*.json
 !data/unpacked/latest.json
-data/packed/*.json
+#data/packed/*.json
 !data/packed/latest.json
 data/meta/*.json
 !data/meta/latest.json
