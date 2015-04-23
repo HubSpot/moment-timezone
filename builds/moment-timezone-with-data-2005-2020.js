@@ -1,5 +1,5 @@
 //! moment-timezone.js
-//! version : 0.2.2
+//! version : 0.3.1
 //! author : Tim Wood
 //! license : MIT
 //! github.com/moment/moment-timezone
@@ -21,7 +21,7 @@
 	// Do not load moment-timezone a second time.
 	if (moment.tz !== undefined) { return moment; }
 
-	var VERSION = "0.2.2",
+	var VERSION = "0.3.1",
 		zones = {},
 		links = {},
 
@@ -302,13 +302,13 @@
 		moment.tz namespace
 	************************************/
 
-	function tz () {
+	function tz (input) {
 		var args = Array.prototype.slice.call(arguments, 0, -1),
 			name = arguments[arguments.length - 1],
 			zone = getZone(name),
 			out  = moment.utc.apply(null, args);
 
-		if (zone && needsOffset(out)) {
+		if (zone && !moment.isMoment(input) && needsOffset(out)) {
 			out.add(zone.parse(out), 'minutes');
 		}
 
@@ -342,14 +342,23 @@
 
 	moment.tz = tz;
 
+	moment.defaultZone = null;
+
 	moment.updateOffset = function (mom, keepTime) {
 		var offset;
+		if (mom._z === undefined) {
+			mom._z = moment.defaultZone;
+		}
 		if (mom._z) {
 			offset = mom._z.offset(mom);
 			if (Math.abs(offset) < 16) {
 				offset = offset / 60;
 			}
-			mom.zone(offset, keepTime);
+			if (mom.utcOffset !== undefined) {
+				mom.utcOffset(-offset, keepTime);
+			} else {
+				mom.zone(offset, keepTime);
+			}
 		}
 	};
 
@@ -384,6 +393,14 @@
 	fn.zoneAbbr = abbrWrap(fn.zoneAbbr);
 	fn.utc      = resetZoneWrap(fn.utc);
 
+	moment.tz.setDefault = function(name) {
+		if (major < 2 || (major === 2 && minor < 9)) {
+			logError('Moment Timezone setDefault() requires Moment.js >= 2.9.0. You are using Moment.js ' + moment.version + '.');
+		}
+		moment.defaultZone = name ? getZone(name) : null;
+		return moment;
+	};
+
 	// Cloning a moment should include the _z property.
 	var momentProperties = moment.momentProperties;
 	if (Object.prototype.toString.call(momentProperties) === '[object Array]') {
@@ -396,7 +413,7 @@
 	}
 
 	loadData({
-		"version": "2014g",
+		"version": "2015a",
 		"zones": [
 			"Africa/Abidjan|GMT|0|0|",
 			"Africa/Addis_Ababa|EAT|-30|0|",
@@ -427,7 +444,7 @@
 			"America/Bogota|COT|50|0|",
 			"America/Boise|MST MDT|70 60|010101010101010101010101010101010|1pOx0 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
 			"America/Campo_Grande|AMST AMT|30 40|010101010101010101010101010101010|1pxD0 1zd0 On0 1HB0 IL0 1wp0 On0 1C10 Lz0 1C10 On0 1zd0 On0 1zd0 Rb0 1zd0 Lz0 1C10 Lz0 1C10 On0 1zd0 On0 1zd0 On0 1zd0 On0 1C10 Lz0 1C10 Lz0 1C10",
-			"America/Cancun|CST CDT|60 50|010101010101010101010101010101010|1pOw0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0",
+			"America/Cancun|CST CDT EST|60 50 50|0101010101010101010102|1pOw0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 Dd0",
 			"America/Caracas|VET VET|40 4u|01|1wmv0",
 			"America/Cayenne|GFT|30|0|",
 			"America/Chicago|CST CDT|60 50|010101010101010101010101010101010|1pOw0 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
@@ -441,7 +458,7 @@
 			"America/Glace_Bay|AST ADT|40 30|010101010101010101010101010101010|1pOu0 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
 			"America/Godthab|WGT WGST|30 20|010101010101010101010101010101010|1pLB0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
 			"America/Goose_Bay|AST ADT|40 30|010101010101010101010101010101010|1pOs1 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zcX Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
-			"America/Grand_Turk|EST EDT AST|50 40 40|010101010101010101012|1pOv0 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
+			"America/Grand_Turk|EST EDT AST|50 40 40|01010101010101010101012|1pOv0 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
 			"America/Guatemala|CST CDT|60 50|010|1sri0 11z0",
 			"America/Guayaquil|ECT|50|0|",
 			"America/Guyana|GYT|40|0|",
@@ -453,6 +470,7 @@
 			"America/Lima|PET|50|0|",
 			"America/Managua|CST CDT|60 50|01010|1pRi0 19X0 1o30 11y0",
 			"America/Matamoros|CST CDT|60 50|010101010101010101010101010101010|1pOw0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 U10 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
+			"America/Merida|CST CDT|60 50|010101010101010101010101010101010|1pOw0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0",
 			"America/Metlakatla|PST|80|0|",
 			"America/Miquelon|PMST PMDT|30 20|010101010101010101010101010101010|1pOt0 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
 			"America/Moncton|AST ADT|40 30|010101010101010101010101010101010|1pOs1 1nX0 11B0 1nX0 ReX 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
@@ -465,7 +483,7 @@
 			"America/Resolute|CST CDT EST|60 50 50|010121010101010101010101010101010|1pOw0 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
 			"America/Santa_Isabel|PST PDT|80 70|010101010101010101010101010101010|1pOy0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0",
 			"America/Santarem|AMT BRT|40 30|01|1xFE0",
-			"America/Santiago|CLST CLT|30 40|010101010101010101010101010101010|1pG30 1o10 11z0 1qN0 WL0 1qN0 17b0 1ip0 11z0 1o10 19X0 1fB0 1nX0 G10 1EL0 Op0 1zb0 Rd0 1wn0 Rd0 1wn0 Rd0 1wn0 Rd0 1wn0 Rd0 1zb0 Op0 1zb0 Rd0 1wn0 Rd0",
+			"America/Santiago|CLST CLT CLT|30 40 30|0101010101010101010102|1pG30 1o10 11z0 1qN0 WL0 1qN0 17b0 1ip0 11z0 1o10 19X0 1fB0 1nX0 G10 1EL0 Op0 1zb0 Rd0 1wn0 Rd0 1wn0",
 			"America/Sao_Paulo|BRST BRT|20 30|010101010101010101010101010101010|1pxC0 1zd0 On0 1HB0 IL0 1wp0 On0 1C10 Lz0 1C10 On0 1zd0 On0 1zd0 Rb0 1zd0 Lz0 1C10 Lz0 1C10 On0 1zd0 On0 1zd0 On0 1zd0 On0 1C10 Lz0 1C10 Lz0 1C10",
 			"America/Scoresbysund|EGT EGST|10 0|010101010101010101010101010101010|1pLB0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
 			"America/St_Johns|NST NDT|3u 2u|010101010101010101010101010101010|1pOrv 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zcX Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
@@ -559,7 +577,7 @@
 			"Australia/Eucla|ACWST ACWDT|-8J -9J|0101010|1tRRf IM0 1qM0 11A0 1o00 11A0",
 			"Australia/LHI|LHDT LHST|-b0 -au|010101010101010101010101010101010|1pLr0 1qMu 11zu 1o0u WLu 1qMu 14nu 1cMu 1cLu 1cMu 1cLu 1cMu 1cLu 1cMu 1cLu 1fAu 1cLu 1cMu 1cLu 1cMu 1cLu 1cMu 1cLu 1cMu 1cLu 1cMu 1cLu 1fAu 1cLu 1cMu 1cLu 1cMu",
 			"Australia/Perth|AWST AWDT|-80 -90|0101010|1tRS0 IM0 1qM0 11A0 1o00 11A0",
-			"Chile/EasterIsland|EASST EAST|50 60|010101010101010101010101010101010|1pG30 1o10 11z0 1qN0 WL0 1qN0 17b0 1ip0 11z0 1o10 19X0 1fB0 1nX0 G10 1EL0 Op0 1zb0 Rd0 1wn0 Rd0 1wn0 Rd0 1wn0 Rd0 1wn0 Rd0 1zb0 Op0 1zb0 Rd0 1wn0 Rd0",
+			"Chile/EasterIsland|EASST EAST EAST|50 60 50|0101010101010101010102|1pG30 1o10 11z0 1qN0 WL0 1qN0 17b0 1ip0 11z0 1o10 19X0 1fB0 1nX0 G10 1EL0 Op0 1zb0 Rd0 1wn0 Rd0 1wn0",
 			"Eire|GMT IST|0 -10|010101010101010101010101010101010|1pLB0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
 			"Etc/GMT+1|GMT+1|10|0|",
 			"Etc/GMT+10|GMT+10|a0|0|",
@@ -591,7 +609,7 @@
 			"Etc/UTC|UTC|0|0|",
 			"Europe/Belfast|GMT BST|0 -10|010101010101010101010101010101010|1pLB0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
 			"Europe/Kaliningrad|EET EEST FET|-20 -30 -30|010101010101020|1pLA0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 8Hz0",
-			"Europe/Minsk|EET EEST FET|-20 -30 -30|01010101010102|1pLA0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0",
+			"Europe/Minsk|EET EEST FET MSK|-20 -30 -30 -30|010101010101023|1pLA0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 8Hy0",
 			"Europe/Moscow|MSK MSD MSK|-30 -40 -40|010101010101020|1pLz0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 8Hz0",
 			"Europe/Samara|SAMT SAMST SAMST SAMT|-40 -50 -40 -30|01010101010230|1pLy0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qN0 WM0",
 			"Europe/Simferopol|EET EEST MSK MSK|-20 -30 -40 -30|010101010101010101023|1pLB0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11z0 1nW0",
@@ -609,11 +627,12 @@
 			"MET|MET MEST|-10 -20|010101010101010101010101010101010|1pLB0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
 			"NZ-CHAT|CHADT CHAST|-dJ -cJ|010101010101010101010101010101010|1pIC0 1io0 17c0 1io0 17c0 1io0 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1cM0 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1cM0 1fA0 1a00 1fA0 1a00",
 			"Pacific/Apia|SST SDT WSDT WSST|b0 a0 -e0 -d0|01012323232323232323232|1Dbn0 1ff0 1a00 CI0 AQ0 1cM0 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1cM0 1fA0 1a00 1fA0 1a00",
+			"Pacific/Bougainville|PGT BST|-a0 -b0|01|1NwE0",
 			"Pacific/Chuuk|CHUT|-a0|0|",
 			"Pacific/Efate|VUT|-b0|0|",
 			"Pacific/Enderbury|PHOT|-d0|0|",
 			"Pacific/Fakaofo|TKT TKT|b0 -d0|01|1Gfn0",
-			"Pacific/Fiji|FJT FJST|-c0 -d0|010101010101010101010101|1BaC0 LA0 1o00 Rc0 1wo0 Ao0 1Nc0 Ao0 1Q00 xz0 1Q10 xz0 1Q10 An0 1Nd0 An0 1Nd0 An0 1Nd0 An0 1Q10 xz0 1Q10",
+			"Pacific/Fiji|FJT FJST|-c0 -d0|010101010101010101010101|1BaC0 LA0 1o00 Rc0 1wo0 Ao0 1Nc0 Ao0 1Q00 xz0 1SN0 uM0 1SM0 xA0 1SM0 uM0 1SM0 uM0 1SM0 uM0 1SM0 uM0 1SM0",
 			"Pacific/Funafuti|TVT|-c0|0|",
 			"Pacific/Galapagos|GALT|60|0|",
 			"Pacific/Gambier|GAMT|90|0|",
@@ -809,10 +828,6 @@
 			"America/Boise|Navajo",
 			"America/Boise|US/Mountain",
 			"America/Campo_Grande|America/Cuiaba",
-			"America/Cancun|America/Merida",
-			"America/Cancun|America/Mexico_City",
-			"America/Cancun|America/Monterrey",
-			"America/Cancun|Mexico/General",
 			"America/Chicago|America/Menominee",
 			"America/Chicago|America/North_Dakota/Center",
 			"America/Chicago|America/North_Dakota/New_Salem",
@@ -869,6 +884,9 @@
 			"America/Indiana/Knox|America/Knox_IN",
 			"America/Indiana/Knox|US/Indiana-Starke",
 			"America/Indiana/Petersburg|America/Indiana/Vincennes",
+			"America/Merida|America/Mexico_City",
+			"America/Merida|America/Monterrey",
+			"America/Merida|Mexico/General",
 			"America/Metlakatla|Pacific/Pitcairn",
 			"America/Noronha|Brazil/DeNoronha",
 			"America/Santiago|Antarctica/Palmer",
