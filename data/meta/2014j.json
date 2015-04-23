@@ -1327,7 +1327,8 @@
 			"name": "Papua New Guinea",
 			"abbr": "PG",
 			"zones": [
-				"Pacific/Port_Moresby"
+				"Pacific/Port_Moresby",
+				"Pacific/Bougainville"
 			]
 		},
 		"PH": {
@@ -1839,7 +1840,8 @@
 			"name": "Vietnam",
 			"abbr": "VN",
 			"zones": [
-				"Asia/Bangkok"
+				"Asia/Bangkok",
+				"Asia/Ho_Chi_Minh"
 			]
 		},
 		"VU": {
@@ -2007,7 +2009,7 @@
 			"countries": [
 				"AQ"
 			],
-			"comments": "Dumont-d'Urville Station, Terre Adelie"
+			"comments": "Dumont-d'Urville Station, Adélie Land"
 		},
 		"Antarctica/Syowa": {
 			"name": "Antarctica/Syowa",
@@ -4039,7 +4041,16 @@
 			"countries": [
 				"PG"
 			],
-			"comments": ""
+			"comments": "most locations"
+		},
+		"Pacific/Bougainville": {
+			"name": "Pacific/Bougainville",
+			"lat": -5.7833,
+			"long": 155.5667,
+			"countries": [
+				"PG"
+			],
+			"comments": "Bougainville"
 		},
 		"Asia/Manila": {
 			"name": "Asia/Manila",
@@ -4511,7 +4522,7 @@
 				"LA",
 				"VN"
 			],
-			"comments": ""
+			"comments": "most of Indochina"
 		},
 		"Asia/Dushanbe": {
 			"name": "Asia/Dushanbe",
@@ -4588,9 +4599,9 @@
 				"DM",
 				"GD",
 				"GP",
-				"MF",
-				"LC",
 				"KN",
+				"LC",
+				"MF",
 				"MS",
 				"VC",
 				"VG",
@@ -4949,6 +4960,15 @@
 				"VE"
 			],
 			"comments": ""
+		},
+		"Asia/Ho_Chi_Minh": {
+			"name": "Asia/Ho_Chi_Minh",
+			"lat": 10.75,
+			"long": 106.6667,
+			"countries": [
+				"VN"
+			],
+			"comments": "south Vietnam"
 		},
 		"Pacific/Efate": {
 			"name": "Pacific/Efate",

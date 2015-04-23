@@ -2007,7 +2007,7 @@
 			"countries": [
 				"AQ"
 			],
-			"comments": "Dumont-d'Urville Station, Terre Adelie"
+			"comments": "Dumont-d'Urville Station, Adélie Land"
 		},
 		"Antarctica/Syowa": {
 			"name": "Antarctica/Syowa",
@@ -4588,9 +4588,9 @@
 				"DM",
 				"GD",
 				"GP",
-				"MF",
-				"LC",
 				"KN",
+				"LC",
+				"MF",
 				"MS",
 				"VC",
 				"VG",
