@@ -19,7 +19,10 @@
 	"use strict";
 
 	// Do not load moment-timezone a second time.
-	if (moment.tz !== undefined) { return moment; }
+	if (moment.tz !== undefined) {
+		logError('Moment Timezone ' + moment.tz.version + ' was already loaded ' + (moment.tz.dataVersion ? 'with data from ' : 'without any data') + moment.tz.dataVersion);
+		return moment;
+	}
 
 	var VERSION = "0.3.1",
 		zones = {},
@@ -345,9 +348,15 @@
 	moment.defaultZone = null;
 
 	moment.updateOffset = function (mom, keepTime) {
-		var offset;
+		var zone = moment.defaultZone,
+			offset;
+
 		if (mom._z === undefined) {
-			mom._z = moment.defaultZone;
+			if (zone && needsOffset(mom) && !mom._isUTC) {
+				mom._d = moment.utc(mom._a)._d;
+				mom.utc().add(zone.parse(mom), 'minutes');
+			}
+			mom._z = zone;
 		}
 		if (mom._z) {
 			offset = mom._z.offset(mom);
