@@ -3,6 +3,8 @@
 var helpers = require("../../helpers/helpers");
 
 exports["Asia/Srednekolymsk"] = {
+	"guess" : helpers.makeTestGuess("Asia/Srednekolymsk", { offset: false, abbr: true }),
+
 	"1924" : helpers.makeTestYear("Asia/Srednekolymsk", [
 		["1924-05-01T13:45:07+00:00", "23:59:59", "LMT", -36892 / 60],
 		["1924-05-01T13:45:08+00:00", "23:45:08", "MAGT", -600]
@@ -93,10 +95,10 @@ exports["Asia/Srednekolymsk"] = {
 	"1992" : helpers.makeTestYear("Asia/Srednekolymsk", [
 		["1992-01-18T15:59:59+00:00", "01:59:59", "MAGT", -600],
 		["1992-01-18T16:00:00+00:00", "03:00:00", "MAGT", -660],
-		["1992-03-28T11:59:59+00:00", "22:59:59", "MAGT", -660],
-		["1992-03-28T12:00:00+00:00", "00:00:00", "MAGST", -720],
-		["1992-09-26T10:59:59+00:00", "22:59:59", "MAGST", -720],
-		["1992-09-26T11:00:00+00:00", "22:00:00", "MAGT", -660]
+		["1992-03-28T14:59:59+00:00", "01:59:59", "MAGT", -660],
+		["1992-03-28T15:00:00+00:00", "03:00:00", "MAGST", -720],
+		["1992-09-26T14:59:59+00:00", "02:59:59", "MAGST", -720],
+		["1992-09-26T15:00:00+00:00", "02:00:00", "MAGT", -660]
 	]),
 
 	"1993" : helpers.makeTestYear("Asia/Srednekolymsk", [
