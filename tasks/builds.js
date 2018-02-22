@@ -21,6 +21,12 @@ module.exports = function (grunt) {
 		data = tz.filterLinkPack(data, start, end);
 		data = JSON.stringify(data, null, '\t');
 		data = data.split('\n').join('\n\t');
+
+		// Also write the packed data (if it was custom)
+		if (start != 0 && end != 9999) {
+			grunt.file.write('data/packed/' + this.target.replace('moment-timezone-with-', 'custom-') + '.json', data);
+		}
+
 		data = 'loadData(' + data + ');\n';
 
 		source = source.replace('// INJECT DATA', data);
