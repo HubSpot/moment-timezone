@@ -13,8 +13,7 @@ module.exports = function(grunt) {
 
 		build : {
 			'moment-timezone-with-data'           : true,
-			'moment-timezone-with-data-2010-2020' : [2010, 2020],
-			'moment-timezone-with-data-2005-2020' : [2005, 2020]
+			'moment-timezone-with-data-2005-2020' : [2005, 2022]
 		},
 
 		uglify : {
@@ -22,7 +21,6 @@ module.exports = function(grunt) {
 				files: {
 					'builds/moment-timezone.min.js'                     : 'moment-timezone.js',
 					'builds/moment-timezone-with-data.min.js'           : 'builds/moment-timezone-with-data.js',
-					'builds/moment-timezone-with-data-2010-2020.min.js' : 'builds/moment-timezone-with-data-2010-2020.js',
 					'builds/moment-timezone-with-data-2005-2020.min.js' : 'builds/moment-timezone-with-data-2005-2020.js'
 				}
 			},
