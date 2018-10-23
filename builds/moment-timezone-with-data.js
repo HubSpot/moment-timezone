@@ -556,9 +556,9 @@
 
 	fn.tz = function (name, keepTime) {
 		if (name) {
-            if (typeof name !== 'string') {
-                throw new Error('Time zone name must be a string, got ' + name + ' [' + typeof name + ']');
-            }
+			if (typeof name !== 'string') {
+				throw new Error('Time zone name must be a string, got ' + name + ' [' + typeof name + ']');
+			}
 			this._z = getZone(name);
 			if (this._z) {
 				moment.updateOffset(this, keepTime);
