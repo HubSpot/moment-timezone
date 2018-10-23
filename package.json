@@ -1,10 +1,6 @@
 {
 	"name": "moment-timezone",
-<<<<<<< HEAD
-	"version": "0.5.14-hubspot",
-=======
 	"version": "0.5.21",
->>>>>>> 2445c798ae30a75af6137774048aeb61db99d451
 	"description": "Parse and display moments in any timezone.",
 	"homepage": "http://momentjs.com/timezone/",
 	"author": "Tim Wood <washwithcare@gmail.com> (http://timwoodcreates.com/)",
