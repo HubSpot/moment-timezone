@@ -1,3 +1,27 @@
+### `0.5.21` _2018-06-23_
+* Bugfix: revert breaking change introduced in 0.5.18
+
+### `0.5.20` _2018-06-18_
+* Bugfix: accidentally commented code
+
+### `0.5.19` _2018-06-18_
+* Revert: moved moment to peerDependencies #628
+
+### `0.5.18` _2018-06-18_
+* Return error when timezone name is not a string. #616
+* Moved moment to peerDependencies #628
+* Prefer nodejs to amd declaration #573
+
+### `0.5.17` _2018-05-12_
+* Updated data to IANA TZDB `2018d`. #616
+
+### `0.5.16` _2018-04-18_
+* Fixed Etc/UTC timezone recognition, updated tests. [#599](https://github.com/moment/moment-timezone/pull/599)
+* Updated minified files to contain IANA TZDB `2018d` data
+
+### `0.5.15` _2018-04-17_
+* Updated data to IANA TZDB `2018d`. [#596](https://github.com/moment/moment-timezone/pull/596)
+
 ### `0.5.14` _2017-10-30_
 * Ensure Intl response is valid when guessing time zone. [#553](https://github.com/moment/moment-timezone/pull/553)
 * Updated data to IANA TZDB `2017c`. [#552](https://github.com/moment/moment-timezone/pull/552)
