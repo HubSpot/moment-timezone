@@ -1,6 +1,7 @@
 "use strict";
 
 module.exports = function(grunt) {
+	const currentYear = new Date().getFullYear();
 	grunt.initConfig({
 		nodeunit : {
 			zones : [
