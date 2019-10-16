@@ -1,5 +1,5 @@
 //! moment-timezone.js
-//! version : 0.5.26
+//! version : 0.5.23
 //! Copyright (c) JS Foundation and other contributors
 //! license : MIT
 //! github.com/moment/moment-timezone
@@ -24,7 +24,7 @@
 	// 	return moment;
 	// }
 
-	var VERSION = "0.5.26",
+	var VERSION = "0.5.23",
 		zones = {},
 		links = {},
 		names = {},
@@ -292,10 +292,7 @@
 		if (a.abbrScore !== b.abbrScore) {
 			return a.abbrScore - b.abbrScore;
 		}
-		if (a.zone.population !== b.zone.population) {
-			return b.zone.population - a.zone.population;
-		}
-		return b.zone.name.localeCompare(a.zone.name);
+		return b.zone.population - a.zone.population;
 	}
 
 	function addToGuesses (name, offsets) {
@@ -400,7 +397,7 @@
 	}
 
 	function getZone (name, caller) {
-
+		
 		name = normalizeName(name);
 
 		var zone = zones[name];
@@ -550,9 +547,7 @@
 				offset = offset / 60;
 			}
 			if (mom.utcOffset !== undefined) {
-				var z = mom._z;
 				mom.utcOffset(-offset, keepTime);
-				mom._z = z;
 			} else {
 				mom.zone(offset, keepTime);
 			}
@@ -589,18 +584,9 @@
 		};
 	}
 
-	function resetZoneWrap2 (old) {
-		return function () {
-			if (arguments.length > 0) this._z = null;
-			return old.apply(this, arguments);
-		};
-	}
-
-	fn.zoneName  = abbrWrap(fn.zoneName);
-	fn.zoneAbbr  = abbrWrap(fn.zoneAbbr);
-	fn.utc       = resetZoneWrap(fn.utc);
-	fn.local     = resetZoneWrap(fn.local);
-	fn.utcOffset = resetZoneWrap2(fn.utcOffset);
+	fn.zoneName = abbrWrap(fn.zoneName);
+	fn.zoneAbbr = abbrWrap(fn.zoneAbbr);
+	fn.utc      = resetZoneWrap(fn.utc);
 
 	moment.tz.setDefault = function(name) {
 		if (major < 2 || (major === 2 && minor < 9)) {
