@@ -953,7 +953,6 @@
 			"zones": [
 				"Asia/Almaty",
 				"Asia/Qyzylorda",
-				"Asia/Qostanay",
 				"Asia/Aqtobe",
 				"Asia/Aqtau",
 				"Asia/Atyrau",
@@ -1088,7 +1087,7 @@
 			]
 		},
 		"MK": {
-			"name": "North Macedonia",
+			"name": "Macedonia",
 			"abbr": "MK",
 			"zones": [
 				"Europe/Belgrade"
@@ -1443,9 +1442,9 @@
 				"Europe/Kaliningrad",
 				"Europe/Moscow",
 				"Europe/Simferopol",
+				"Europe/Volgograd",
 				"Europe/Kirov",
 				"Europe/Astrakhan",
-				"Europe/Volgograd",
 				"Europe/Saratov",
 				"Europe/Ulyanovsk",
 				"Europe/Samara",
@@ -1617,7 +1616,7 @@
 			]
 		},
 		"SZ": {
-			"name": "Eswatini (Swaziland)",
+			"name": "Swaziland",
 			"abbr": "SZ",
 			"zones": [
 				"Africa/Johannesburg"
@@ -1740,7 +1739,6 @@
 			"name": "Ukraine",
 			"abbr": "UA",
 			"zones": [
-				"Europe/Simferopol",
 				"Europe/Kiev",
 				"Europe/Uzhgorod",
 				"Europe/Zaporozhye"
@@ -3548,15 +3546,6 @@
 			],
 			"comments": "Qyzylorda/Kyzylorda/Kzyl-Orda"
 		},
-		"Asia/Qostanay": {
-			"name": "Asia/Qostanay",
-			"lat": 53.2,
-			"long": 63.6167,
-			"countries": [
-				"KZ"
-			],
-			"comments": "Qostanay/Kostanay/Kustanay"
-		},
 		"Asia/Aqtobe": {
 			"name": "Asia/Aqtobe",
 			"lat": 50.2833,
@@ -4281,10 +4270,18 @@
 			"lat": 44.95,
 			"long": 34.1,
 			"countries": [
-				"RU",
-				"UA"
+				"RU"
 			],
 			"comments": "MSK+00 - Crimea"
+		},
+		"Europe/Volgograd": {
+			"name": "Europe/Volgograd",
+			"lat": 48.7333,
+			"long": 44.4167,
+			"countries": [
+				"RU"
+			],
+			"comments": "MSK+00 - Volgograd"
 		},
 		"Europe/Kirov": {
 			"name": "Europe/Kirov",
@@ -4303,15 +4300,6 @@
 				"RU"
 			],
 			"comments": "MSK+01 - Astrakhan"
-		},
-		"Europe/Volgograd": {
-			"name": "Europe/Volgograd",
-			"lat": 48.7333,
-			"long": 44.4167,
-			"countries": [
-				"RU"
-			],
-			"comments": "MSK+01 - Volgograd"
 		},
 		"Europe/Saratov": {
 			"name": "Europe/Saratov",
