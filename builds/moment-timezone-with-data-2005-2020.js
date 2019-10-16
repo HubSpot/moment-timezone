@@ -1,5 +1,5 @@
 //! moment-timezone.js
-//! version : 0.5.23
+//! version : 0.5.26
 //! Copyright (c) JS Foundation and other contributors
 //! license : MIT
 //! github.com/moment/moment-timezone
@@ -24,7 +24,7 @@
 	// 	return moment;
 	// }
 
-	var VERSION = "0.5.23",
+	var VERSION = "0.5.26",
 		zones = {},
 		links = {},
 		names = {},
@@ -292,7 +292,10 @@
 		if (a.abbrScore !== b.abbrScore) {
 			return a.abbrScore - b.abbrScore;
 		}
-		return b.zone.population - a.zone.population;
+		if (a.zone.population !== b.zone.population) {
+			return b.zone.population - a.zone.population;
+		}
+		return b.zone.name.localeCompare(a.zone.name);
 	}
 
 	function addToGuesses (name, offsets) {
@@ -397,7 +400,7 @@
 	}
 
 	function getZone (name, caller) {
-		
+
 		name = normalizeName(name);
 
 		var zone = zones[name];
@@ -547,7 +550,9 @@
 				offset = offset / 60;
 			}
 			if (mom.utcOffset !== undefined) {
+				var z = mom._z;
 				mom.utcOffset(-offset, keepTime);
+				mom._z = z;
 			} else {
 				mom.zone(offset, keepTime);
 			}
@@ -584,9 +589,18 @@
 		};
 	}
 
-	fn.zoneName = abbrWrap(fn.zoneName);
-	fn.zoneAbbr = abbrWrap(fn.zoneAbbr);
-	fn.utc      = resetZoneWrap(fn.utc);
+	function resetZoneWrap2 (old) {
+		return function () {
+			if (arguments.length > 0) this._z = null;
+			return old.apply(this, arguments);
+		};
+	}
+
+	fn.zoneName  = abbrWrap(fn.zoneName);
+	fn.zoneAbbr  = abbrWrap(fn.zoneAbbr);
+	fn.utc       = resetZoneWrap(fn.utc);
+	fn.local     = resetZoneWrap(fn.local);
+	fn.utcOffset = resetZoneWrap2(fn.utcOffset);
 
 	moment.tz.setDefault = function(name) {
 		if (major < 2 || (major === 2 && minor < 9)) {
@@ -608,7 +622,7 @@
 	}
 
 	loadData({
-		"version": "2018g",
+		"version": "2019b",
 		"zones": [
 			"Africa/Abidjan|GMT|0|0||48e5",
 			"Africa/Nairobi|EAT|-30|0||47e5",
@@ -616,11 +630,11 @@
 			"Africa/Lagos|WAT|-10|0||17e6",
 			"Africa/Maputo|CAT|-20|0||26e5",
 			"Africa/Cairo|EET EEST|-20 -30|0101010101010101010|1q0K0 11z0 1o10 WL0 1qN0 Rb0 1wp0 On0 1zd0 Lz0 1EN0 Fb0 c10 8n0 8Nd0 gL0 e10 mn0|15e6",
-			"Africa/Casablanca|+00 +01|0 -10|010101010101010101010101010101010101|1xwo0 AL0 1Nd0 wn0 1FB0 Db0 1zd0 Lz0 1Nf0 wM0 co0 go0 1o00 s00 dA0 vc0 11A0 A00 e00 y00 11A0 uM0 e00 Dc0 11A0 s00 e00 IM0 WM0 mo0 gM0 LA0 WM0 jA0 e00|32e5",
+			"Africa/Casablanca|+00 +01|0 -10|01010101010101010101010101010101010101010101|1xwo0 AL0 1Nd0 wn0 1FB0 Db0 1zd0 Lz0 1Nf0 wM0 co0 go0 1o00 s00 dA0 vc0 11A0 A00 e00 y00 11A0 uM0 e00 Dc0 11A0 s00 e00 IM0 WM0 mo0 gM0 LA0 WM0 jA0 e00 28M0 e00 2600 e00 28M0 e00 2600 gM0|32e5",
 			"Europe/Paris|CET CEST|-10 -20|0101010101010101010101010101010101010|1pLB0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0|11e6",
 			"Africa/Johannesburg|SAST|-20|0||84e5",
 			"Africa/Khartoum|EAT CAT|-30 -20|01|1Usl0|51e5",
-			"Africa/Sao_Tome|GMT WAT|0 -10|01|1UQN0",
+			"Africa/Sao_Tome|GMT WAT|0 -10|010|1UQN0 2q00",
 			"Africa/Tripoli|EET CET CEST|-20 -10 -20|0120|1IlA0 TA0 1o00|11e5",
 			"Africa/Tunis|CET CEST|-10 -20|010101010|1q1z0 10N0 1aN0 1qM0 WM0 1qM0 11A0 1o00|20e5",
 			"Africa/Windhoek|CAT WAT|-20 -10|010101010101010101010101010|1pOo0 11B0 1nX0 11B0 1nX0 11B0 1qL0 11B0 1nX0 11B0 1nX0 11B0 1nX0 11B0 1nX0 11B0 1qL0 WN0 1qL0 11B0 1nX0 11B0 1nX0 11B0 1nX0 11B0|32e4",
@@ -640,7 +654,7 @@
 			"America/La_Paz|-04|40|0||19e5",
 			"America/Lima|-05|50|0||11e6",
 			"America/Denver|MST MDT|70 60|0101010101010101010101010101010101010|1pOx0 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|26e5",
-			"America/Campo_Grande|-03 -04|30 40|0101010101010101010101010101010101010|1pxD0 1zd0 On0 1HB0 IL0 1wp0 On0 1C10 Lz0 1C10 On0 1zd0 On0 1zd0 Rb0 1zd0 Lz0 1C10 Lz0 1C10 On0 1zd0 On0 1zd0 On0 1zd0 On0 1HB0 FX0 1HB0 FX0 1HB0 IL0 1HB0 FX0 1HB0|77e4",
+			"America/Campo_Grande|-03 -04|30 40|010101010101010101010101010101|1pxD0 1zd0 On0 1HB0 IL0 1wp0 On0 1C10 Lz0 1C10 On0 1zd0 On0 1zd0 Rb0 1zd0 Lz0 1C10 Lz0 1C10 On0 1zd0 On0 1zd0 On0 1zd0 On0 1HB0 FX0|77e4",
 			"America/Cancun|CST CDT EST|60 50 50|0101010101010101010102|1pOw0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 Dd0|63e4",
 			"America/Caracas|-04 -0430|40 4u|010|1wmv0 kqo0|29e5",
 			"America/Chicago|CST CDT|60 50|0101010101010101010101010101010101010|1pOw0 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|92e5",
@@ -664,7 +678,7 @@
 			"America/Managua|CST CDT|60 50|01010|1pRi0 19X0 1o30 11y0|22e5",
 			"America/Matamoros|CST CDT|60 50|0101010101010101010101010101010101010|1pOw0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 U10 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|45e4",
 			"America/Mexico_City|CST CDT|60 50|0101010101010101010101010101010101010|1pOw0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0|20e6",
-			"America/Metlakatla|PST AKST AKDT|80 90 80|0121212121212121|1PAa0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|14e2",
+			"America/Metlakatla|PST AKST AKDT|80 90 80|01212120121212121|1PAa0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 uM0 jB0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|14e2",
 			"America/Miquelon|-03 -02|30 20|0101010101010101010101010101010101010|1pOt0 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|61e2",
 			"America/Moncton|AST ADT|40 30|0101010101010101010101010101010101010|1pOs1 1nX0 11B0 1nX0 ReX 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|64e3",
 			"America/Montevideo|-02 -03|20 30|0101010101010101010101|1pLE0 1ip0 11z0 1ld0 14n0 1o10 11z0 1o10 11z0 1o10 14n0 1ld0 14n0 1ld0 14n0 1o10 11z0 1o10 11z0 1o10 11z0|17e5",
@@ -676,7 +690,7 @@
 			"America/Resolute|CST CDT EST|60 50 50|0101210101010101010101010101010101010|1pOw0 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|229",
 			"America/Santarem|-04 -03|40 30|01|1xFE0|21e4",
 			"America/Santiago|-03 -04|30 40|01010101010101010101010101010101010|1pG30 1o10 11z0 1qN0 WL0 1qN0 17b0 1ip0 11z0 1o10 19X0 1fB0 1nX0 G10 1EL0 Op0 1zb0 Rd0 1wn0 Rd0 46n0 Ap0 1Nb0 Ap0 1Nb0 Ap0 1zb0 11B0 1nX0 11B0 1nX0 11B0 1nX0 11B0|62e5",
-			"America/Sao_Paulo|-02 -03|20 30|0101010101010101010101010101010101010|1pxC0 1zd0 On0 1HB0 IL0 1wp0 On0 1C10 Lz0 1C10 On0 1zd0 On0 1zd0 Rb0 1zd0 Lz0 1C10 Lz0 1C10 On0 1zd0 On0 1zd0 On0 1zd0 On0 1HB0 FX0 1HB0 FX0 1HB0 IL0 1HB0 FX0 1HB0|20e6",
+			"America/Sao_Paulo|-02 -03|20 30|010101010101010101010101010101|1pxC0 1zd0 On0 1HB0 IL0 1wp0 On0 1C10 Lz0 1C10 On0 1zd0 On0 1zd0 Rb0 1zd0 Lz0 1C10 Lz0 1C10 On0 1zd0 On0 1zd0 On0 1zd0 On0 1HB0 FX0|20e6",
 			"Atlantic/Azores|-01 +00|10 0|0101010101010101010101010101010101010|1pLB0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0|25e4",
 			"America/St_Johns|NST NDT|3u 2u|0101010101010101010101010101010101010|1pOrv 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zcX Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|11e4",
 			"America/Tegucigalpa|CST CDT|60 50|010|1su60 AL0|11e5",
@@ -710,8 +724,8 @@
 			"Asia/Dili|+09|-90|0||19e4",
 			"Asia/Dubai|+04|-40|0||39e5",
 			"Asia/Famagusta|EET EEST +03|-20 -30 -30|010101010101010101010101201010101010|1pLB0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 15U0 2Ks0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0",
-			"Asia/Gaza|EET EEST|-20 -30|0101010101010101010101010101010101010|1pTa0 18N0 1bz0 19z0 1gp0 1610 1iL0 11z0 1o10 14o0 1lA1 SKX 1xd1 MKX 1AN0 1a00 1fA0 1cL0 1cN0 1nX0 1210 1nz0 1220 1qL0 WN0 1qL0 WN0 1qL0 WN0 1qL0 11B0 1qL0 WN0 1qL0 WN0 1qL0|18e5",
-			"Asia/Hebron|EET EEST|-20 -30|010101010101010101010101010101010101010|1pTa0 18N0 1bz0 19z0 1gp0 1610 1iL0 12L0 1mN0 14o0 1lc0 Tb0 1xd1 MKX bB0 cn0 1cN0 1a00 1fA0 1cL0 1cN0 1nX0 1210 1nz0 1220 1qL0 WN0 1qL0 WN0 1qL0 WN0 1qL0 11B0 1qL0 WN0 1qL0 WN0 1qL0|25e4",
+			"Asia/Gaza|EET EEST|-20 -30|0101010101010101010101010101010101010|1pTa0 18N0 1bz0 19z0 1gp0 1610 1iL0 11z0 1o10 14o0 1lA1 SKX 1xd1 MKX 1AN0 1a00 1fA0 1cL0 1cN0 1nX0 1210 1nz0 1220 1qL0 WN0 1qL0 WN0 1qL0 11c0 1oo0 11c0 1rc0 Wo0 1rc0 Wo0 1rc0|18e5",
+			"Asia/Hebron|EET EEST|-20 -30|010101010101010101010101010101010101010|1pTa0 18N0 1bz0 19z0 1gp0 1610 1iL0 12L0 1mN0 14o0 1lc0 Tb0 1xd1 MKX bB0 cn0 1cN0 1a00 1fA0 1cL0 1cN0 1nX0 1210 1nz0 1220 1qL0 WN0 1qL0 WN0 1qL0 11c0 1oo0 11c0 1rc0 Wo0 1rc0 Wo0 1rc0|25e4",
 			"Asia/Hong_Kong|HKT|-80|0||73e5",
 			"Asia/Hovd|+07 +08|-70 -80|010101010|1pL70 1cL0 1cN0 1fz0 kEp0 1cJ0 1cP0 1cJ0|81e3",
 			"Asia/Irkutsk|+08 +09|-80 -90|010101010101010|1pLu0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 8Hz0|60e4",
@@ -732,6 +746,7 @@
 			"Asia/Novosibirsk|+06 +07|-60 -70|0101010101010101|1pLw0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 8Hz0 4eN0|15e5",
 			"Asia/Omsk|+06 +07|-60 -70|010101010101010|1pLw0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 8Hz0|12e5",
 			"Asia/Pyongyang|KST KST|-90 -8u|010|1P4D0 6BA0|29e5",
+			"Asia/Qyzylorda|+06 +05|-60 -50|01|1Xei0|73e4",
 			"Asia/Rangoon|+0630|-6u|0||48e5",
 			"Asia/Sakhalin|+10 +11|-a0 -b0|0101010101010101|1pLs0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 8Hz0 3rd0|58e4",
 			"Asia/Seoul|KST|-90|0||23e6",
@@ -772,7 +787,6 @@
 			"Etc/GMT+7|-07|70|0|",
 			"Pacific/Pitcairn|-08|80|0||56",
 			"Pacific/Gambier|-09|90|0||125",
-			"Etc/UCT|UCT|0|0|",
 			"Etc/UTC|UTC|0|0|",
 			"Europe/Ulyanovsk|+03 +04|-30 -40|0101010101010101|1pLz0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 8Hz0 3rd0|13e5",
 			"Europe/London|GMT BST|0 -10|0101010101010101010101010101010101010|1pLB0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0|10e6",
@@ -1071,7 +1085,7 @@
 			"Asia/Urumqi|Antarctica/Vostok",
 			"Asia/Urumqi|Asia/Almaty",
 			"Asia/Urumqi|Asia/Kashgar",
-			"Asia/Urumqi|Asia/Qyzylorda",
+			"Asia/Urumqi|Asia/Qostanay",
 			"Asia/Urumqi|Asia/Thimbu",
 			"Asia/Urumqi|Asia/Thimphu",
 			"Asia/Urumqi|Etc/GMT-6",
@@ -1093,9 +1107,10 @@
 			"Australia/Sydney|Australia/Melbourne",
 			"Australia/Sydney|Australia/NSW",
 			"Australia/Sydney|Australia/Victoria",
-			"Etc/UCT|UCT",
+			"Etc/UTC|Etc/UCT",
 			"Etc/UTC|Etc/Universal",
 			"Etc/UTC|Etc/Zulu",
+			"Etc/UTC|UCT",
 			"Etc/UTC|UTC",
 			"Etc/UTC|Universal",
 			"Etc/UTC|Zulu",
