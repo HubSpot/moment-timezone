@@ -1,5 +1,8 @@
+*.tar.gz
 temp
 tests
+typing-tests
+scripts
 .idea
 
 Gruntfile.js

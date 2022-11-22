@@ -4,7 +4,7 @@ var tz = require('../moment-timezone-utils').tz,
     groupLeaders = require('./group-leaders.json');
 
 module.exports = function (grunt) {
-	grunt.registerTask('data-pack', '6. Pack data from data-dedupe.', function (version) {
+	grunt.registerTask('data-pack', '7. Pack data from data-dedupe.', function (version) {
 		version = version || 'latest';
 
 		var unpacked = grunt.file.readJSON('data/unpacked/' + version + '.json'),
@@ -14,8 +14,14 @@ module.exports = function (grunt) {
 			return tz.pack(unpacked);
 		});
 
-		grunt.file.mkdir('data/packed');
+		output.countries = unpacked.countries.map(function (unpacked) {
+			return tz.packCountry(unpacked);
+		});
+
 		grunt.file.write('data/packed/' + version + '.json', JSON.stringify(output, null, '\t'));
+		if (version === 'latest') {
+			grunt.file.copy('data/packed/latest.json', 'data/packed/' + unpacked.version + '.json');
+		}
 
 		grunt.log.ok('Packed data for ' + version);
 	});

@@ -6,7 +6,7 @@ exports["Africa/Gaborone"] = {
 
 	"guess:by:offset" : helpers.makeTestGuess("Africa/Gaborone", { offset: true, expect: "Africa/Cairo" }),
 
-	"guess:by:abbr" : helpers.makeTestGuess("Africa/Gaborone", { abbr: true, expect: "Africa/Maputo" }),
+	"guess:by:abbr" : helpers.makeTestGuess("Africa/Gaborone", { abbr: true, expect: "Africa/Khartoum" }),
 
 	"1903" : helpers.makeTestYear("Africa/Gaborone", [
 		["1903-02-28T21:49:39+00:00", "23:59:59", "LMT", -7820 / 60],
