@@ -21,36 +21,41 @@ function dedupe(zone) {
 		abbrs      : abbrs,
 		untils     : untils,
 		offsets    : offsets,
-		population : zone.population
+		population : zone.population,
+		countries  : zone.countries
 	};
 }
 
-function findVersion (source) {
-	var matches = source.match(/\nRelease (\d{4}[a-z]) /);
+function addCountries(countries) {
+	var result = [];
 
-	if (matches && matches[1]) {
-		return matches[1];
+	for (var country in countries) {
+		result.push({
+			name : countries[country].abbr,
+			zones : countries[country].zones
+		});
 	}
-	throw new Error("Could not find version from temp/download/latest/NEWS.");
+
+	return result;
 }
 
 module.exports = function (grunt) {
-	grunt.registerTask('data-dedupe', '5. Remove duplicate entries from data-collect.', function (version) {
+	grunt.registerTask('data-dedupe', '6. Remove duplicate entries from data-collect.', function (version) {
 		version = version || 'latest';
 
 		var zones = grunt.file.readJSON('temp/collect/' + version + '.json'),
+			meta = grunt.file.readJSON('data/meta/' + version + '.json'),
 			output = {
-				version : version,
+				version : meta.version,
 				zones : zones.map(dedupe),
-				links : []
+				links : [],
+				countries : addCountries(meta.countries)
 			};
 
-		if (version === 'latest') {
-			output.version = findVersion(grunt.file.read('temp/download/latest/NEWS'));
-		}
-
-		grunt.file.mkdir('data/unpacked');
 		grunt.file.write('data/unpacked/' + version + '.json', JSON.stringify(output, null, 2));
+		if (version === 'latest') {
+			grunt.file.copy('data/unpacked/' + version + '.json', 'data/unpacked/' + output.version + '.json');
+		}
 
 		grunt.log.ok('Deduped data for ' + version);
 	});
